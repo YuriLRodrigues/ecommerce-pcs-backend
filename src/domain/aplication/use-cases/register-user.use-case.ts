@@ -2,6 +2,7 @@ import { Either, left, right } from '@root/core/logic/Either';
 import { UserRepository } from '../repositories/user.repository';
 import { UserEntity } from '@root/domain/enterprise/entities/user.entity';
 import { Injectable } from '@nestjs/common';
+import { HashGenerator } from '../cryptography/hash-generator';
 
 type Output = Either<Error, UserEntity>;
 
@@ -15,7 +16,10 @@ type InputProps = {
 
 @Injectable()
 export class RegisterUserUseCase {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly hashGenerator: HashGenerator,
+  ) {}
 
   async execute(data: InputProps): Promise<Output> {
     const { avatar, email, name, password, username } = data;
@@ -28,11 +32,13 @@ export class RegisterUserUseCase {
       return left(new Error(`User with this e-mail already exists`));
     }
 
+    const hashedPassword = await this.hashGenerator.hash(password);
+
     const user = UserEntity.create({
       avatar,
       email,
       name,
-      password,
+      password: hashedPassword,
       username,
     });
 

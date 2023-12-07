@@ -1,6 +1,7 @@
 import { InMemoryUsersRepository } from 'test/repositories/in-memory.repository';
 import { RegisterUserUseCase } from './register-user.use-case';
 import { UserEntity } from '@root/domain/enterprise/entities/user.entity';
+import { FakeHashGenerator } from 'test/fake-hash-generator';
 
 describe('Register User - Use Case', () => {
   let inMemoryUsersRepository: InMemoryUsersRepository;
@@ -9,7 +10,8 @@ describe('Register User - Use Case', () => {
 
   beforeEach(() => {
     inMemoryUsersRepository = new InMemoryUsersRepository();
-    sut = new RegisterUserUseCase(inMemoryUsersRepository);
+    const fakeHasherGenerator = new FakeHashGenerator();
+    sut = new RegisterUserUseCase(inMemoryUsersRepository, fakeHasherGenerator);
     userDefault = UserEntity.create({
       avatar: '/avatar.png',
       name: 'Joe Doe',
@@ -29,7 +31,7 @@ describe('Register User - Use Case', () => {
         name: 'Joe Doe',
         username: 'joeDoe',
         email: 'joedoe@hotmail.com',
-        password: '123456789',
+        password: '123456789-hashed',
       }),
     );
   });
