@@ -1,4 +1,4 @@
-import { Entity } from 'src/core/domain/entity/entity';
+import { Entity } from '@root/core/domain/entity/entity';
 import { UniqueEntityId } from 'src/core/domain/entity/unique-id.entity';
 import { Optional } from 'src/core/logic/Optional';
 
