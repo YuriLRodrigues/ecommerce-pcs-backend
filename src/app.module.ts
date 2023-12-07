@@ -4,9 +4,11 @@ import { AppService } from './app.service';
 import { EnvModule } from './infra/env/env.module';
 import { ConfigModule } from '@nestjs/config';
 import { envSchema } from './infra/env/env';
+import { HttpModule } from './infra/http/http.module';
 
 @Module({
   imports: [
+    HttpModule,
     EnvModule,
     ConfigModule.forRoot({
       validate: (env) => envSchema.parse(env),
