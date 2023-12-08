@@ -2,6 +2,7 @@ import { UserRepository } from '../repositories/user.repository';
 import { HashGenerator } from '../cryptography/hash-generator';
 import { Encrypter } from '../cryptography/encrypter';
 import { Either, left, right } from '@root/core/logic/Either';
+import { Injectable } from '@nestjs/common';
 
 type Output = Either<Error, string>;
 
@@ -10,7 +11,8 @@ type Input = {
   password: string;
 };
 
-export class AuthorizationUseCase {
+@Injectable()
+export class AuthorizationUserUseCase {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly encrypter: Encrypter,
