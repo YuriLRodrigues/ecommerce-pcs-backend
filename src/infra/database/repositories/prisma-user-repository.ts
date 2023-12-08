@@ -9,7 +9,9 @@ import {
 import { UserEntity } from '@root/domain/enterprise/entities/user.entity';
 import { PrismaService } from '../prisma.service';
 import { UserMappers } from '../mappers/user.mappers';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class PrismaUserRepository implements UserRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
