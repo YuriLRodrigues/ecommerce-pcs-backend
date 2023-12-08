@@ -3,21 +3,27 @@ import { AppModule } from './app.module';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { EnvService } from './infra/env/env.service';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
 
+  app.useGlobalPipes(new ValidationPipe());
+
   const config = new DocumentBuilder()
     .setTitle('PCS Docs')
-    .setDescription('The PCS Ecommerce API description')
-    .addBearerAuth({
-      type: 'http',
-      scheme: 'bearer',
-      bearerFormat: 'JWT',
-      name: 'Authorization',
-      description: 'Enter token',
-      in: 'header',
-    })
+    .setDescription('The PCS Ecommerce API')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        description: 'Enter token',
+        in: 'header',
+      },
+      'KEY_AUTH',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
