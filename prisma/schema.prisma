@@ -23,3 +23,30 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Images {
+  id         String  @id @default(uuid())
+  url        String
+  products   Product @relation(fields: [productsId], references: [id])
+  productsId String
+}
+
+model ProductComments {
+  commentId String  @id @default(uuid())
+  comment   String
+  Product   Product @relation(fields: [productId], references: [id])
+  productId String
+}
+
+model Product {
+  id           String            @id @default(uuid())
+  description  String
+  price        Float
+  onSale       Boolean
+  salePrice    Float?
+  images       Images[]
+  stars        Float[]
+  inStock      Boolean
+  totalInStock Int
+  comments     ProductComments[]
+}
