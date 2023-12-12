@@ -1,12 +1,12 @@
 import { UserEntity } from '@root/domain/enterprise/entities/user.entity';
-import { AuthorizationUseCase } from './authorization.use-case';
+import { AuthorizationUserUseCase } from './authorization.use-case';
 import { FakeHashGenerator } from 'test/fake-hash-generator';
 import { InMemoryUsersRepository } from 'test/repositories/in-memory.repository';
 import { Encrypter } from '../cryptography/encrypter';
 import { FakeEncrypter } from 'test/fake-encrypter';
 
 describe('Authorization - Use Case', () => {
-  let sut: AuthorizationUseCase;
+  let sut: AuthorizationUserUseCase;
   let user: UserEntity;
   let hashGenerator: FakeHashGenerator;
   let encrypter: Encrypter;
@@ -16,7 +16,7 @@ describe('Authorization - Use Case', () => {
     inMemoryUsersRepository = new InMemoryUsersRepository();
     encrypter = new FakeEncrypter();
     hashGenerator = new FakeHashGenerator();
-    sut = new AuthorizationUseCase(inMemoryUsersRepository, encrypter, hashGenerator);
+    sut = new AuthorizationUserUseCase(inMemoryUsersRepository, encrypter, hashGenerator);
     user = UserEntity.create({
       avatar: '/avatar.png',
       name: 'Joe Doe',
@@ -42,7 +42,7 @@ describe('Authorization - Use Case', () => {
     );
   });
 
-  it('not should be able of valid the user and return your token with incorrectly credentials', async () => {
+  it('not should be able of valid the user and return your token with incorrectly password', async () => {
     const output = await sut.execute({
       email: user.email,
       password: '12345678',
@@ -50,5 +50,15 @@ describe('Authorization - Use Case', () => {
 
     expect(output.isLeft()).toBe(true);
     expect(output.value).toEqual(new Error('Invalid credentials'));
+  });
+
+  it('not should be able of valid the user and return your token with incorrectly email', async () => {
+    const output = await sut.execute({
+      email: 'email@gmail.com',
+      password: user.email,
+    });
+
+    expect(output.isLeft()).toBe(true);
+    expect(output.value).toEqual(new Error('User not found'));
   });
 });
