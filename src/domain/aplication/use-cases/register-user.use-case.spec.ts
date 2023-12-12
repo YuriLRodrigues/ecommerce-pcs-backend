@@ -51,5 +51,6 @@ describe('Register User - Use Case', () => {
 
     expect(newUser.isLeft()).toBe(true);
     expect(inMemoryUsersRepository.users).toHaveLength(1);
+    expect(newUser.value).toEqual(new Error('User with this credentials already exists'));
   });
 });
