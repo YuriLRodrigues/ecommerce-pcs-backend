@@ -29,7 +29,7 @@ export class RegisterUserUseCase {
     });
 
     if (userAlreadyExists) {
-      return left(new Error(`User with this e-mail already exists`));
+      return left(new Error(`User with this credentials already exists`));
     }
 
     const hashedPassword = await this.hashGenerator.hash(password);
