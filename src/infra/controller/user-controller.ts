@@ -236,7 +236,6 @@ export class UserController {
     type: DeleteUserRS[202],
   })
   @ApiUnauthorizedResponse({
-    // verificar o status code se ta correto pq aq é n autorizado msm
     status: 401,
     description: 'Invalid credentials',
     type: DeleteUserRS[401],
