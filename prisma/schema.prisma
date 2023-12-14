@@ -31,22 +31,36 @@ model Images {
   productsId String
 }
 
-model ProductComments {
-  commentId String  @id @default(uuid())
+model ProductFeedback {
+  id        String   @id @default(uuid())
+  Product   Product? @relation(fields: [productId], references: [id])
+  productId String?
+  stars     Float
   comment   String
-  Product   Product @relation(fields: [productId], references: [id])
-  productId String
+  createdAt DateTime @default(now())
+}
+
+model ProductCategory {
+  id        String   @id @default(uuid())
+  Product   Product? @relation(fields: [productId], references: [id])
+  productId String?
+  name      String
+  createdAt DateTime @default(now())
 }
 
 model Product {
   id           String            @id @default(uuid())
+  name         String            @unique
+  slug         String            @unique
   description  String
   price        Float
   onSale       Boolean
   salePrice    Float?
+  feedback     ProductFeedback[]
   images       Images[]
-  stars        Float[]
+  category     ProductCategory[]
   inStock      Boolean
   totalInStock Int
-  comments     ProductComments[]
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
 }
