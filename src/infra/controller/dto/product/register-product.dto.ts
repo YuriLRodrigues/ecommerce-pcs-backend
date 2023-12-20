@@ -3,6 +3,20 @@ import { IsBoolean, IsNumber, IsString } from 'class-validator';
 
 export class RegisterProductDTO {
   @ApiProperty({
+    description: 'Nome que o produto irá receber',
+    example: 'RTX 3060 Ultra - 12GB',
+  })
+  @IsString()
+  name: string;
+
+  @ApiProperty({
+    description: 'Slug de pesquisa do produto',
+    example: 'rtx-3060-ultra-12gb',
+  })
+  @IsString()
+  slug: string;
+
+  @ApiProperty({
     description: 'Descrição do determinado produto',
     example:
       'Produto super raro, produção feita para apenas 5 países, totalizando 89 produções do mesmo apenas...',
@@ -32,13 +46,6 @@ export class RegisterProductDTO {
   onSale: boolean;
 
   @ApiProperty({
-    description: 'É a avaliação que o usuário faz daquele produto',
-    example: 4,
-  })
-  @IsNumber()
-  stars: number;
-
-  @ApiProperty({
     description: 'Situa se o produto tem em estoque ainda ou não',
     example: true,
   })
@@ -47,7 +54,7 @@ export class RegisterProductDTO {
 
   @ApiProperty({
     description: 'Determina a quantidade de produtos em estoque',
-    example: true,
+    example: 100,
   })
   @IsNumber()
   totalInStock: number;
