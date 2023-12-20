@@ -41,8 +41,4 @@ export class CategoryEntity extends Entity<CategoryEntityProps> {
 
     return category;
   }
-
-  public addProduct(product: ProductEntity) {
-    return this.products.push(product);
-  }
 }
