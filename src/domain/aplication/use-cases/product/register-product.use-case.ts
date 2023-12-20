@@ -4,11 +4,12 @@ import { ProductEntity } from '@root/domain/enterprise/entities/product.entity';
 import { Either, left, right } from '@root/core/logic/Either';
 
 type Input = {
+  name: string;
+  slug: string;
   description: string;
   price: number;
   salePrice?: number;
   onSale: boolean;
-  stars: Array<number>;
   inStock?: boolean;
   totalInStock?: number;
 };
@@ -23,30 +24,34 @@ export class RegisterProductUseCase {
     description,
     onSale,
     price,
-    stars,
     salePrice,
     inStock,
     totalInStock,
+    name,
+    slug,
   }: Input): Promise<Output> {
+    const productExists = await this.productRepository.findProductBySlug({
+      slug,
+    });
+
+    if (productExists) {
+      return left(new Error('Product with this name or slug already exists'));
+    }
+
     const product = ProductEntity.create({
+      name,
+      slug,
       description,
       onSale,
       price,
-      stars,
       salePrice,
       inStock,
       totalInStock,
     });
 
-    const productAlreadyExists = await this.productRepository.findProductById({
-      id: product.id.toValue(),
+    const newProduct = await this.productRepository.register({
+      product,
     });
-
-    if (productAlreadyExists) {
-      return left(new Error('Product already exists'));
-    }
-
-    const newProduct = await this.productRepository.register(product);
 
     return right(newProduct);
   }
