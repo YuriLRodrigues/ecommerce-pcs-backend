@@ -1,7 +1,7 @@
 import { ProductEntity } from '@root/domain/enterprise/entities/product.entity';
 
-export type FindProductByIdProps = {
-  id: string;
+export type FindProductBySlugProps = {
+  slug: string;
 };
 
 export type DeleteProductProps = {
@@ -9,19 +9,28 @@ export type DeleteProductProps = {
 };
 
 export type RegisterProductProps = {
-  description: string;
-  price: number;
-  salePrice?: number;
-  onSale: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
-  stars: Array<number>;
-  inStock: boolean;
-  totalInStock: number;
+  product: ProductEntity;
+};
+
+export type FindAllProductsProps = {
+  limit: number;
+  page: number;
+};
+
+export type FindProductsByCategoryProps = {
+  slug: string;
 };
 
 export abstract class ProductRepository {
-  abstract findProductById({ id }: FindProductByIdProps): Promise<ProductEntity | null>;
   abstract register(data: RegisterProductProps): Promise<ProductEntity>;
+  abstract findProductBySlug({ slug }: FindProductBySlugProps): Promise<ProductEntity | null>;
+  abstract findProductByCategory({ slug }: FindProductsByCategoryProps): Promise<ProductEntity[]>;
+  abstract findAllProducts({ limit, page }: FindAllProductsProps): Promise<ProductEntity[]>;
   abstract delete(data: DeleteProductProps): Promise<void>;
 }
+
+// export type AddFeedbackProps = {
+//   stars: number;
+//   productId: string;
+//   comment: string;
+// };
