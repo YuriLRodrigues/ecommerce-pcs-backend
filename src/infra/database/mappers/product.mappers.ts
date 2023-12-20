@@ -1,23 +1,41 @@
 import { Prisma, Product } from '@prisma/client';
+import { UniqueEntityId } from '@root/core/domain/entity/unique-id.entity';
 import { ProductEntity } from '@root/domain/enterprise/entities/product.entity';
 
 export class ProductMappers {
   static toDomain(data: Product): ProductEntity {
-    return ProductEntity.create({
-      description: data.description,
-      onSale: data.onSale,
-      price: data.price,
-      stars: data.stars,
-      salePrice: data.salePrice,
-    });
+    return ProductEntity.create(
+      {
+        name: data.name,
+        slug: data.slug,
+        description: data.description,
+        onSale: data.onSale,
+        price: data.price,
+        salePrice: data.salePrice,
+        inStock: data.inStock,
+        totalInStock: data.totalInStock,
+        productCategoryId: data.productCategoryId,
+      },
+      new UniqueEntityId(data.id),
+    );
   }
 
   static toPersistence(data: ProductEntity): Prisma.ProductCreateInput {
     return {
+      id: data.id.toValue(),
+      name: data.name,
+      slug: data.slug,
       description: data.description,
       onSale: data.onSale,
       price: data.price,
-      stars: data.stars,
+      inStock: data.inStock,
+      totalInStock: data.totalInStock,
+      salePrice: data.salePrice,
+      productCategory: {
+        connect: {
+          id: data.productCategoryId ?? undefined,
+        },
+      },
     };
   }
 }
