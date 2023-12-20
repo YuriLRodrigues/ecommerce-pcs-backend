@@ -18,6 +18,6 @@ import { ProductRepository } from '@root/domain/aplication/repositories/product.
       provide: ProductRepository,
     },
   ],
-  exports: [PrismaService, UserRepository],
+  exports: [PrismaService, UserRepository, ProductRepository],
 })
 export class DatabaseModule {}
