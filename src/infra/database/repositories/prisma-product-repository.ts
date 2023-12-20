@@ -1,6 +1,8 @@
 import {
   DeleteProductProps,
-  FindProductByIdProps,
+  FindAllProductsProps,
+  FindProductBySlugProps,
+  FindProductsByCategoryProps,
   ProductRepository,
   RegisterProductProps,
 } from '@root/domain/aplication/repositories/product.repository';
@@ -13,10 +15,24 @@ import { ProductMappers } from '../mappers/product.mappers';
 export class PrismaProductRepository implements ProductRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findProductById({ id }: FindProductByIdProps): Promise<ProductEntity> {
+  async register({ product }: RegisterProductProps): Promise<ProductEntity> {
+    const raw = ProductMappers.toPersistence(product);
+
+    const newProduct = await this.prismaService.product.create({
+      data: raw,
+    });
+
+    if (!newProduct) {
+      return null;
+    }
+
+    return ProductMappers.toDomain(newProduct);
+  }
+
+  async findProductBySlug({ slug }: FindProductBySlugProps): Promise<ProductEntity> {
     const product = await this.prismaService.product.findFirst({
       where: {
-        id,
+        slug,
       },
     });
 
@@ -27,32 +43,39 @@ export class PrismaProductRepository implements ProductRepository {
     return ProductMappers.toDomain(product);
   }
 
-  async register({
-    description,
-    onSale,
-    price,
-    salePrice,
-    stars,
-    inStock,
-    totalInStock,
-  }: RegisterProductProps): Promise<ProductEntity> {
-    const product = await this.prismaService.product.create({
-      data: {
-        description,
-        onSale,
-        price,
-        salePrice,
-        stars,
-        inStock,
-        totalInStock,
-      },
+  async findAllProducts({ limit, page }: FindAllProductsProps): Promise<ProductEntity[]> {
+    const products = await this.prismaService.product.findMany({
+      skip: page,
+      take: limit,
     });
 
-    if (!product) {
+    if (products.length === 0) {
       return null;
     }
 
-    return ProductMappers.toDomain(product);
+    const mappedProducts = products.map((product) => {
+      return ProductMappers.toDomain(product);
+    });
+
+    return mappedProducts;
+  }
+
+  async findProductByCategory({ slug }: FindProductsByCategoryProps): Promise<ProductEntity[]> {
+    const products = await this.prismaService.product.findMany({
+      where: {
+        category: {
+          slug,
+        },
+      },
+    });
+
+    if (products.length === 0) {
+      return null;
+    }
+
+    const mappedProducts = products.map((product) => ProductMappers.toDomain(product));
+
+    return mappedProducts;
   }
 
   async delete({ id }: DeleteProductProps): Promise<void> {
