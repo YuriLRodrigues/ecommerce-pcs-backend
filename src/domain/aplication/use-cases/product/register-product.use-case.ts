@@ -5,11 +5,11 @@ import { Either, left, right } from '@root/core/logic/Either';
 
 type Input = {
   name: string;
-  slug: string;
+  slug?: string;
   description: string;
   price: number;
   salePrice?: number;
-  onSale: boolean;
+  onSale?: boolean;
   inStock?: boolean;
   totalInStock?: number;
 };
