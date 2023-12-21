@@ -2,6 +2,7 @@ import { Either, left, right } from '@root/core/logic/Either';
 import { UserRepository } from '../../repositories/user.repository';
 import { UserEntity } from '@root/domain/enterprise/entities/user.entity';
 import { UniqueEntityId } from '@root/core/domain/entity/unique-id.entity';
+import { Injectable } from '@nestjs/common';
 
 type Output = Either<Error, UserEntity>;
 
@@ -11,6 +12,7 @@ type Input = {
   username: string;
 };
 
+@Injectable()
 export class EditInfoUserUseCase {
   constructor(private readonly userRepository: UserRepository) {}
 
