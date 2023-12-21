@@ -5,7 +5,7 @@ export type FindProductBySlugProps = {
 };
 
 export type DeleteProductProps = {
-  id: string;
+  productSlug: string;
 };
 
 export type RegisterProductProps = {
@@ -15,22 +15,32 @@ export type RegisterProductProps = {
 export type FindAllProductsProps = {
   limit: number;
   page: number;
+  inStock?: boolean;
+};
+
+export type ChangeProductCategoryProps = {
+  currentCategoryId: string;
+  newCategoryId: string;
+};
+
+export type ChangeProductInfoProps = {
+  currentCategoryId: string;
+  newCategoryId: string;
+};
+
+export type SaveProductProps = {
+  product: ProductEntity;
 };
 
 export type FindProductsByCategoryProps = {
-  slug: string;
+  categorySlug: string;
 };
 
 export abstract class ProductRepository {
-  abstract register(data: RegisterProductProps): Promise<ProductEntity>;
+  abstract register({ product }: RegisterProductProps): Promise<ProductEntity>;
   abstract findProductBySlug({ slug }: FindProductBySlugProps): Promise<ProductEntity | null>;
-  abstract findProductByCategory({ slug }: FindProductsByCategoryProps): Promise<ProductEntity[]>;
-  abstract findAllProducts({ limit, page }: FindAllProductsProps): Promise<ProductEntity[]>;
-  abstract delete(data: DeleteProductProps): Promise<void>;
+  abstract findAllProducts({ limit, page, inStock }: FindAllProductsProps): Promise<ProductEntity[]>;
+  abstract delete({ productSlug }: DeleteProductProps): Promise<void>;
+  abstract save({ product }: SaveProductProps): Promise<void>;
+  abstract findProductsByCategory({ categorySlug }: FindProductsByCategoryProps): Promise<ProductEntity[]>;
 }
-
-// export type AddFeedbackProps = {
-//   stars: number;
-//   productId: string;
-//   comment: string;
-// };
