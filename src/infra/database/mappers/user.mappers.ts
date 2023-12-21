@@ -11,7 +11,7 @@ export class UserMappers {
         name: user.name,
         password: user.password,
         username: user.username,
-        roles: user.role.map((role) => UserRoles[role]) ?? [UserRoles.user],
+        roles: user.roles.map((role) => UserRoles[role]) ?? [UserRoles.user],
       },
       new UniqueEntityId(user.id),
     );
@@ -24,7 +24,7 @@ export class UserMappers {
       name: user.name,
       password: user.password,
       username: user.username,
-      role: user.roles.map((role) => UserRole[role]) ?? [UserRole.user],
+      roles: user.roles.map((role) => UserRole[role]) ?? [UserRole.user],
     };
   }
 }

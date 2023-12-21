@@ -14,7 +14,7 @@ export class ProductMappers {
         salePrice: data.salePrice,
         inStock: data.inStock,
         totalInStock: data.totalInStock,
-        productCategoryId: data.productCategoryId,
+        categoryId: data.categoryId,
       },
       new UniqueEntityId(data.id),
     );
@@ -31,9 +31,9 @@ export class ProductMappers {
       inStock: data.inStock,
       totalInStock: data.totalInStock,
       salePrice: data.salePrice,
-      productCategory: {
+      category: {
         connect: {
-          id: data.productCategoryId ?? undefined,
+          id: data.categoryId ?? undefined,
         },
       },
     };
