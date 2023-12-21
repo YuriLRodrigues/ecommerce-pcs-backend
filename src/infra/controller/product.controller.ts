@@ -3,6 +3,7 @@ import {
   Body,
   ConflictException,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   NotFoundException,
@@ -28,9 +29,10 @@ import { FindAllProductsRS } from './dto/product/returns-to-swagger/find-all';
 import { Roles } from '../auth/roles';
 import { UserRoles } from '@root/domain/enterprise/entities/user.entity';
 import { RegisterProductRS } from './dto/product/returns-to-swagger/register';
-import { FindProductsByCategory } from '@root/domain/aplication/use-cases/product/find-products-by-category';
-import { FindProductsByCategoryRS } from './dto/product/returns-to-swagger/find-by-category';
 import { FindProductsBySlugRS } from './dto/product/returns-to-swagger/find-by-slug';
+import { DeleteProductUseCase } from '@root/domain/aplication/use-cases/product/delete-product.use-case';
+import { DeleteProductDTO } from './dto/product/delete-product.dto';
+import { DeleteProductRS } from './dto/product/returns-to-swagger/delete';
 
 @ApiTags('Product')
 @Controller('/products')
@@ -38,8 +40,8 @@ export class ProductController {
   constructor(
     private readonly registerProductUseCase: RegisterProductUseCase,
     private readonly findProductBySlug: FindProductBySlugUseCase,
-    private readonly findProductsByCategory: FindProductsByCategory,
     private readonly findAllProducts: FindAllProductsUseCase,
+    private readonly deleteProduct: DeleteProductUseCase,
   ) {}
 
   // Register Product - Private Route - Admin Permission - POST
@@ -149,52 +151,6 @@ export class ProductController {
     return productsBySlug.value;
   }
 
-  // Find Products By Category - Public Route - GET
-  @ApiOperation({
-    summary: 'Busca por todos os produtos de acordo com uma determinada categoria',
-    description:
-      'Essa rota é responsável por fazer a busca de todos os produtos em uma categoria registrado no sistema',
-  })
-  @ApiOkResponse({
-    status: 200,
-    description: 'Returns the products found by category',
-    type: FindProductsByCategoryRS[200],
-  })
-  @ApiBadRequestResponse({
-    status: 400,
-    description: 'Internal API error',
-    type: FindProductsByCategoryRS[400],
-  })
-  @ApiNotFoundResponse({
-    status: 404,
-    description: 'No product was found',
-    type: FindProductsByCategoryRS[404],
-  })
-  @Public()
-  @Get('/findByCategory/:category')
-  async findByCategory(@Param('category') slug: string) {
-    const productsByCategory = await this.findProductsByCategory.execute({ slug });
-
-    if (productsByCategory.isLeft()) {
-      const error = productsByCategory.value;
-
-      switch (error.message) {
-        case 'Products not found in this category':
-          throw new NotFoundException({
-            statusCode: HttpStatus.NOT_FOUND,
-            error: error.message,
-          });
-        default:
-          throw new BadRequestException({
-            statusCode: HttpStatus.BAD_REQUEST,
-            error: 'Internal API error',
-          });
-      }
-    }
-
-    return productsByCategory.value;
-  }
-
   // Find All Products - Public Route - GET
   @ApiOperation({
     summary: 'Busca por todos os produtos',
@@ -218,7 +174,7 @@ export class ProductController {
   })
   @Public()
   @Get('/findAll')
-  async findAll(@Query('page') page = 1, @Query('limit') limit = 20) {
+  async findAll(@Query('page') page = 1, @Query('limit') limit = 20, @Query('inStock') inStock = undefined) {
     page = page <= 0 ? 1 : Number(page);
     limit = limit <= 0 ? 20 : Number(limit);
     limit = limit > 100 ? 100 : Number(limit);
@@ -226,6 +182,7 @@ export class ProductController {
     const products = await this.findAllProducts.execute({
       limit,
       page,
+      inStock,
     });
 
     if (products.isLeft()) {
@@ -245,5 +202,53 @@ export class ProductController {
     }
 
     return products.value;
+  }
+
+  // Delete Product - Private Route - Admin Permission - DELETE
+  @ApiOperation({
+    summary: 'Deleta um produto',
+    description:
+      'Essa rota é responsável por fazer a busca de um produto pelo seu slug e depois deletar ele pelo id',
+  })
+  @ApiOkResponse({
+    status: 202,
+    description: 'returns a message saying that the product has been deleted',
+    type: DeleteProductRS[200],
+  })
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'Internal API error',
+    type: DeleteProductRS[400],
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'No product was found',
+    type: DeleteProductRS[404],
+  })
+  @ApiBearerAuth()
+  @Roles({ roles: [UserRoles.admin] })
+  @Delete()
+  async delete(@Body() { productSlug }: DeleteProductDTO) {
+    const productIsDeleted = await this.deleteProduct.execute({
+      productSlug,
+    });
+
+    if (productIsDeleted.isLeft()) {
+      const error = productIsDeleted.value;
+      switch (error.message) {
+        case `Product ${productSlug} not found`:
+          throw new NotFoundException({
+            statusCode: HttpStatus.NOT_FOUND,
+            error: error.message,
+          });
+        default:
+          throw new BadRequestException({
+            statusCode: HttpStatus.BAD_REQUEST,
+            error: 'Internal API error',
+          });
+      }
+    }
+
+    return 'Product deleted successfully';
   }
 }
