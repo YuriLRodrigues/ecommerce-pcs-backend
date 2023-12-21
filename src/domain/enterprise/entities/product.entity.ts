@@ -12,18 +12,20 @@ export type ProductEntityProps = {
   onSale: boolean;
   inStock: boolean;
   totalInStock: number;
-  productCategoryId?: string;
+  categoryId?: string;
   createdAt: Date;
   updatedAt?: Date;
 };
 
 type EditInfoProductsProps = {
+  name?: string;
   description?: string;
   price?: number;
   salePrice?: number;
   onSale?: boolean;
   inStock?: boolean;
   totalInStock?: number;
+  categoryId?: string;
 };
 
 export class ProductEntity extends Entity<ProductEntityProps> {
@@ -59,14 +61,18 @@ export class ProductEntity extends Entity<ProductEntityProps> {
     return this.props.inStock;
   }
 
-  get productCategoryId() {
-    return this.props.productCategoryId;
+  get categoryId() {
+    return this.props.categoryId;
+  }
+
+  set categoryId(value: string) {
+    this.props.categoryId = value;
   }
 
   public static create(
     props: Optional<
       ProductEntityProps,
-      'createdAt' | 'totalInStock' | 'inStock' | 'salePrice' | 'onSale' | 'slug'
+      'createdAt' | 'totalInStock' | 'inStock' | 'salePrice' | 'onSale' | 'slug' | 'categoryId'
     >,
     id?: UniqueEntityId,
   ) {
@@ -82,6 +88,7 @@ export class ProductEntity extends Entity<ProductEntityProps> {
         totalInStock: props.totalInStock ?? 0,
         createdAt: props.createdAt ?? new Date(),
         updatedAt: props.updatedAt ?? new Date(),
+        categoryId: props.categoryId ?? undefined,
       },
       id,
     );
@@ -90,13 +97,17 @@ export class ProductEntity extends Entity<ProductEntityProps> {
   }
 
   public editInfo(data: EditInfoProductsProps) {
-    const { description, onSale, price, salePrice } = data;
+    const { name, description, onSale, price, salePrice, inStock, totalInStock, categoryId } = data;
 
+    this.props.name = name ?? this.props.name;
     this.props.description = description ?? this.props.description;
     this.props.onSale = onSale ?? this.props.onSale;
     this.props.price = price ?? this.props.price;
     this.props.salePrice = salePrice ?? this.props.salePrice;
     this.props.updatedAt = new Date();
+    this.props.inStock = inStock ?? this.props.inStock;
+    this.props.totalInStock = totalInStock ?? this.props.totalInStock;
+    this.props.categoryId = categoryId ?? this.props.categoryId;
 
     return this;
   }

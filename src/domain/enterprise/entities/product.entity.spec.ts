@@ -5,7 +5,6 @@ describe('Product - Entity', () => {
   it('should be able to create a product without be in promotion', async () => {
     const product = await ProductEntity.create({
       name: 'Product',
-      slug: 'product',
       description: 'Product description',
       price: 1500,
     });
@@ -23,7 +22,6 @@ describe('Product - Entity', () => {
   it('should be able to create a product with promotion', async () => {
     const product = await ProductEntity.create({
       name: 'Product',
-      slug: 'product',
       description: 'Product description with promotion',
       onSale: true,
       price: 1800,
