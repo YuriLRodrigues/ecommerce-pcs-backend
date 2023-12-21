@@ -1,29 +1,75 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
 
 export class FindAllProducts200DTO {
   @ApiProperty({
-    example: `{name: 'RTX 3080';
-      slug: 'rtx-3080';
-      description: 'Placa de vídeo muito forte, roda todos os jogos em 2K';
-      price: 1599.89;
-      salePrice?: null;
-      onSale: false;
-      createdAt: 14/12/2023;
-      updatedAt?: null;
-      inStock: true;
-      totalInStock: 5;}`,
-    description: 'Retorna o produto contendo todas as suas características',
+    description: 'Nome que o produto irá receber',
+    example: 'RTX 3060 Ultra - 12GB',
   })
-  product: {
-    name: string;
-    slug: string;
-    description: string;
-    price: number;
-    salePrice?: number;
-    onSale: boolean;
-    createdAt: Date;
-    updatedAt?: Date;
-    inStock: boolean;
-    totalInStock: number;
-  };
+  @IsString()
+  name: string;
+
+  @ApiProperty({
+    description: 'Slug de pesquisa do produto',
+    example: 'rtx-3060-ultra-12gb',
+  })
+  @IsString()
+  slug: string;
+
+  @ApiProperty({
+    description: 'Descrição do determinado produto',
+    example:
+      'Produto super raro, produção feita para apenas 5 países, totalizando 89 produções do mesmo apenas...',
+  })
+  @IsString()
+  description: string;
+
+  @ApiProperty({
+    description: 'Preço do produto',
+    example: 100,
+  })
+  @IsNumber()
+  price: number;
+
+  @ApiProperty({
+    description: 'Preço do produto caso ele esteja em promoção - Não obrigatório',
+    example: 80,
+  })
+  @IsNumber()
+  salePrice?: number;
+
+  @ApiProperty({
+    description: 'Boolean para dizer se aquele produto está em promoção',
+    example: true,
+  })
+  @IsBoolean()
+  onSale: boolean;
+
+  @ApiProperty({
+    description: 'Situa se o produto tem em estoque ainda ou não',
+    example: true,
+  })
+  @IsBoolean()
+  inStock: boolean;
+
+  @ApiProperty({
+    description: 'Determina a quantidade de produtos em estoque',
+    example: 100,
+  })
+  @IsNumber()
+  totalInStock: number;
+
+  @ApiProperty({
+    description: 'Retorna quando o produto foi criado',
+    example: '18/12/2023',
+  })
+  @IsDate()
+  createdAt: Date;
+
+  @ApiProperty({
+    description: 'Retorna o dia que o produto teve uma atualização',
+    example: '20/12/2023',
+  })
+  @IsDate()
+  updatedAt: Date;
 }
