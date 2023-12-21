@@ -8,16 +8,18 @@ type Output = Either<Error, ProductEntity[]>;
 type Input = {
   limit: number;
   page: number;
+  inStock?: boolean | undefined;
 };
 
 @Injectable()
 export class FindAllProductsUseCase {
   constructor(private readonly productRepository: ProductRepository) {}
 
-  async execute({ limit, page }: Input): Promise<Output> {
+  async execute({ limit, page, inStock }: Input): Promise<Output> {
     const products = await this.productRepository.findAllProducts({
       limit,
       page,
+      inStock,
     });
 
     if (products.length === 0) {
