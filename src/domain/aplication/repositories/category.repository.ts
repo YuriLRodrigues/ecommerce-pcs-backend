@@ -1,25 +1,28 @@
 import { CategoryEntity } from '@root/domain/enterprise/entities/category.entity';
 
+export type findCategoryBySlugProps = {
+  categorySlug: string;
+};
 export type findCategoryByIdProps = {
   categoryId: string;
 };
 
 export type deleteProductInCategoryProps = {
-  categoryId: string;
+  categorySlug: string;
 };
 
 export type createProductInCategoryProps = {
   category: CategoryEntity;
 };
 
-export type updateProductInCategoryProps = {
-  categoryId: string;
+export type saveProductInCategoryProps = {
   category: CategoryEntity;
 };
 
 export abstract class CategoryRepository {
   abstract createCategory({ category }: createProductInCategoryProps): Promise<CategoryEntity>;
+  abstract findCategoryBySlug({ categorySlug }: findCategoryBySlugProps): Promise<CategoryEntity>;
   abstract findCategoryById({ categoryId }: findCategoryByIdProps): Promise<CategoryEntity>;
-  abstract updateCategory({ category, categoryId }: updateProductInCategoryProps): Promise<CategoryEntity>;
-  abstract deleteCategory({ categoryId }: deleteProductInCategoryProps): Promise<void>;
+  abstract saveCategory({ category }: saveProductInCategoryProps): Promise<void>;
+  abstract deleteCategory({ categorySlug }: deleteProductInCategoryProps): Promise<void>;
 }
