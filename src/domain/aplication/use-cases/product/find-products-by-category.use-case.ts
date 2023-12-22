@@ -6,6 +6,9 @@ import { Injectable } from '@nestjs/common';
 
 type Input = {
   categorySlug: string;
+  page: number;
+  limit: number;
+  inStock?: boolean | undefined;
 };
 
 type Output = Either<Error, ProductEntity[]>;
@@ -17,7 +20,7 @@ export class FindProductsByCategoryUseCase {
     private readonly categoryRepository: CategoryRepository,
   ) {}
 
-  async execute({ categorySlug }: Input): Promise<Output> {
+  async execute({ categorySlug, limit, page, inStock }: Input): Promise<Output> {
     const categoryExists = await this.categoryRepository.findCategoryBySlug({
       categorySlug,
     });
@@ -27,11 +30,14 @@ export class FindProductsByCategoryUseCase {
     }
 
     const productsWithCategory = await this.productRepository.findProductsByCategory({
-      categorySlug,
+      categoryId: categoryExists.id.toValue(),
+      limit,
+      page,
+      inStock,
     });
 
-    if (!productsWithCategory) {
-      return left(new Error('Product not found'));
+    if (productsWithCategory.length === 0) {
+      return left(new Error('No products found in this category'));
     }
 
     return right(productsWithCategory);

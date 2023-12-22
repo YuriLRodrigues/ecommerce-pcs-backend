@@ -10,7 +10,7 @@ describe('Find Products By Category - Use Case', () => {
   let inMemoryProductRepository: InMemoryProductRepository;
 
   const categoryPhones = CategoryEntity.create({
-    name: 'Celulares',
+    name: 'Phones',
   });
 
   const categoryPC = CategoryEntity.create({
@@ -23,12 +23,14 @@ describe('Find Products By Category - Use Case', () => {
     price: 100,
     categoryId: categoryPhones.id.toValue(),
   });
+
   const product2 = ProductEntity.create({
     name: 'Product 2',
     description: 'product-2',
     price: 100,
     categoryId: categoryPhones.id.toValue(),
   });
+
   const product3 = ProductEntity.create({
     name: 'Product 3',
     description: 'product-3',
@@ -36,43 +38,62 @@ describe('Find Products By Category - Use Case', () => {
     categoryId: categoryPC.id.toValue(),
   });
 
-  beforeAll(() => {
+  beforeEach(() => {
     inMemoryCategoryRepository = new InMemoryCategoryRepository();
     inMemoryProductRepository = new InMemoryProductRepository();
     sut = new FindProductsByCategoryUseCase(inMemoryProductRepository, inMemoryCategoryRepository);
 
-    inMemoryProductRepository.register({
-      product,
-    });
-    inMemoryProductRepository.register({
-      product: product2,
-    });
-    inMemoryProductRepository.register({
-      product: product3,
-    });
-
     inMemoryCategoryRepository.createCategory({
       category: categoryPC,
     });
+
     inMemoryCategoryRepository.createCategory({
       category: categoryPhones,
     });
   });
 
-  it('should be able to find all products in a category', async () => {
+  it('not should be able to find an products in a category', async () => {
     const output = await sut.execute({
       categorySlug: categoryPC.slug,
+      limit: 10,
+      page: 1,
+    });
+
+    expect(output.isLeft()).toBe(true);
+    expect(output.value).toEqual(new Error(`No products found in this category`));
+  });
+
+  it('should be able to find all products in a category', async () => {
+    inMemoryProductRepository.register({
+      product,
+    });
+
+    inMemoryProductRepository.register({
+      product: product2,
+    });
+
+    inMemoryProductRepository.register({
+      product: product3,
+    });
+
+    const output = await sut.execute({
+      categorySlug: categoryPhones.slug,
+      limit: 10,
+      page: 1,
+      inStock: false,
     });
 
     expect(output.isRight()).toBe(true);
     expect(
-      inMemoryProductRepository.products.filter((prod) => prod.categoryId === categoryPC.id.toValue()),
-    ).toHaveLength(1);
+      inMemoryProductRepository.products.filter((prod) => prod.categoryId === categoryPhones.id.toValue()),
+    ).toHaveLength(2);
   });
 
   it('not should be able to find all products in a category non-existent', async () => {
     const output = await sut.execute({
       categorySlug: 'invalid category slug',
+      limit: 10,
+      page: 1,
     });
 
     expect(output.isLeft()).toBe(true);
