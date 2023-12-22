@@ -24,7 +24,7 @@ describe('Update Product - Use Case', () => {
     categoryId: categoryPhones.id.toValue(),
   });
 
-  beforeAll(() => {
+  beforeEach(() => {
     inMemoryProductRepository = new InMemoryProductRepository();
     inMemoryCategoryRepository = new InMemoryCategoryRepository();
     sut = new UpdateProductCategoryUseCase(inMemoryProductRepository, inMemoryCategoryRepository);
@@ -46,7 +46,6 @@ describe('Update Product - Use Case', () => {
     });
 
     expect(output.isLeft()).toBe(true);
-    console.log(inMemoryProductRepository.products[0].categoryId);
     expect(inMemoryProductRepository.products[0].categoryId).toEqual(categoryPhones.id.toValue());
     expect(output.value).toEqual(new Error('This category does not exist'));
   });
