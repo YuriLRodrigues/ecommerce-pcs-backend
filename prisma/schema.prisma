@@ -24,7 +24,7 @@ model User {
   updatedAt DateTime   @updatedAt
 }
 
-model Images {
+model Image {
   id         String  @id @default(uuid())
   url        String
   products   Product @relation(fields: [productsId], references: [id])
@@ -56,7 +56,7 @@ model Product {
   price        Float
   onSale       Boolean
   salePrice    Float?
-  images       Images[]
+  images       Image[]
   category     Category?  @relation(fields: [categoryId], references: [id])
   categoryId   String?
   feedback     Feedback[]
