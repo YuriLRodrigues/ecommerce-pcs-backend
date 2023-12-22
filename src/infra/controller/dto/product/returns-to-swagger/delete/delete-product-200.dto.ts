@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
-export class DeleteProduct200DTO {
+export class DeleteProduct202DTO {
   @ApiProperty({
     description: 'Retorna uma mensagem dizendo que o usuário foi cadastrado',
     example: 'User deleted successfully',

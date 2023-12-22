@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
 
-export class FindAllProducts200DTO {
+export class FindProductsByCategory200DTO {
   @ApiProperty({
     description: 'Nome que o produto irá receber',
     example: 'RTX 3060 Ultra - 12GB',
