@@ -33,7 +33,10 @@ export type SaveProductProps = {
 };
 
 export type FindProductsByCategoryProps = {
-  categorySlug: string;
+  categoryId: string;
+  page?: number;
+  limit?: number;
+  inStock?: boolean | undefined;
 };
 
 export abstract class ProductRepository {
@@ -42,5 +45,10 @@ export abstract class ProductRepository {
   abstract findAllProducts({ limit, page, inStock }: FindAllProductsProps): Promise<ProductEntity[]>;
   abstract delete({ productSlug }: DeleteProductProps): Promise<void>;
   abstract save({ product }: SaveProductProps): Promise<void>;
-  abstract findProductsByCategory({ categorySlug }: FindProductsByCategoryProps): Promise<ProductEntity[]>;
+  abstract findProductsByCategory({
+    categoryId,
+    limit,
+    page,
+    inStock,
+  }: FindProductsByCategoryProps): Promise<ProductEntity[]>;
 }
