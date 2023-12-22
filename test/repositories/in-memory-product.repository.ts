@@ -38,8 +38,15 @@ export class InMemoryProductRepository extends ProductRepository {
     return;
   }
 
-  async findProductsByCategory({ categorySlug }: FindProductsByCategoryProps): Promise<ProductEntity[]> {
-    const products = await this.products.filter((p) => p.categoryId === categorySlug);
-    return products ?? null;
+  async findProductsByCategory({
+    categoryId,
+    inStock,
+    limit,
+    page,
+  }: FindProductsByCategoryProps): Promise<ProductEntity[]> {
+    const products = await this.products.filter((p) => p.categoryId === categoryId);
+
+    const productsPaginated = products.slice((page - 1) * limit, limit * page);
+    return productsPaginated.filter((prod) => prod.inStock === inStock);
   }
 }
