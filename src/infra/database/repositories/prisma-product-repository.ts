@@ -45,66 +45,37 @@ export class PrismaProductRepository implements ProductRepository {
   }
 
   async findAllProducts({ limit, page, inStock }: FindAllProductsProps): Promise<ProductEntity[]> {
-    if (inStock === undefined) {
-      const products = await this.prismaService.product.findMany({
-        skip: page,
-        take: limit,
-      });
+    const products = await this.prismaService.product.findMany({
+      skip: page,
+      take: limit,
+      where: {
+        inStock: inStock,
+      },
+    });
 
-      if (products.length === 0) {
-        return null;
-      }
-
-      const mappedProducts = products.map((product) => {
-        return ProductMappers.toDomain(product);
-      });
-      return mappedProducts;
+    if (products.length === 0) {
+      return null;
     }
 
-    if (inStock === true) {
-      const products = await this.prismaService.product.findMany({
-        skip: page,
-        take: limit,
-        where: {
-          inStock: true,
-        },
-      });
-
-      if (products.length === 0) {
-        return null;
-      }
-
-      const mappedProducts = products.map((product) => {
-        return ProductMappers.toDomain(product);
-      });
-      return mappedProducts;
-    }
-
-    if (inStock === false) {
-      const products = await this.prismaService.product.findMany({
-        skip: page,
-        take: limit,
-        where: {
-          inStock: false,
-        },
-      });
-
-      if (products.length === 0) {
-        return null;
-      }
-
-      const mappedProducts = products.map((product) => {
-        return ProductMappers.toDomain(product);
-      });
-      return mappedProducts;
-    }
+    const mappedProducts = products.map((product) => {
+      return ProductMappers.toDomain(product);
+    });
+    return mappedProducts;
   }
 
-  async findProductsByCategory({ categorySlug }: FindProductsByCategoryProps): Promise<ProductEntity[]> {
+  async findProductsByCategory({
+    inStock,
+    limit,
+    page,
+    categoryId,
+  }: FindProductsByCategoryProps): Promise<ProductEntity[]> {
     const products = await this.prismaService.product.findMany({
       where: {
-        categoryId: categorySlug,
+        categoryId: categoryId,
+        inStock: inStock,
       },
+      skip: page,
+      take: limit,
     });
 
     if (products.length === 0) {
