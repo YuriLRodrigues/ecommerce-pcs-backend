@@ -23,7 +23,6 @@ describe('Delete Product - Use Case', () => {
     const output = await sut.execute({
       productSlug: product.slug,
     });
-    console.log(output);
 
     expect(output.isRight()).toBe(true);
     expect(inMemoryProductRepository.products).toHaveLength(0);
