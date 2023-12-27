@@ -14,7 +14,7 @@ export class FindCategoryBySlugUseCase {
   constructor(private readonly categoryRepository: CategoryRepository) {}
 
   async execute({ categorySlug }: Input): Promise<Output> {
-    const category = await this.categoryRepository.findCategoryBySlug({
+    const category = await this.categoryRepository.findBySlug({
       categorySlug,
     });
 
