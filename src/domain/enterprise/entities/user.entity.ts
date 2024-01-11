@@ -57,7 +57,10 @@ export class UserEntity extends Entity<UserEntityProps> {
     return this.props.updatedAt;
   }
 
-  public static create(props: Optional<UserEntityProps, 'createdAt' | 'roles'>, id?: UniqueEntityId) {
+  public static create(
+    props: Optional<UserEntityProps, 'createdAt' | 'roles' | 'updatedAt'>,
+    id?: UniqueEntityId,
+  ) {
     const user = new UserEntity(
       {
         avatar: props.avatar,
@@ -70,6 +73,7 @@ export class UserEntity extends Entity<UserEntityProps> {
       },
       id,
     );
+
     return user;
   }
 

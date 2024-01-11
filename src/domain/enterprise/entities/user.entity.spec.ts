@@ -1,4 +1,5 @@
 import { UniqueEntityId } from '@root/core/domain/entity/unique-id.entity';
+
 import { UserEntity, UserRoles } from './user.entity';
 
 describe('User - Entity', () => {
@@ -23,6 +24,8 @@ describe('User - Entity', () => {
     expect(output.password).toBe('123456789');
     expect(output.email).toBe('joedoe@hotmail.com');
     expect(output.roles).toContain(UserRoles.user);
+    expect(output.createdAt).toBeInstanceOf(Date);
+    expect(output.updatedAt).toBe(undefined);
   });
 
   it('should be able create a User with ID', () => {
