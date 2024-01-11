@@ -17,8 +17,9 @@ export type ProductEntityProps = {
   updatedAt?: Date;
 };
 
-type EditInfoProductsProps = {
+export type EditInfoProductsProps = {
   name?: string;
+  slug?: string;
   description?: string;
   price?: number;
   salePrice?: number;
@@ -83,9 +84,9 @@ export class ProductEntity extends Entity<ProductEntityProps> {
         description: props.description,
         price: props.price,
         onSale: props.onSale ?? false,
-        salePrice: props.salePrice ?? null,
+        salePrice: props.salePrice ?? undefined,
         inStock: props.inStock ?? false,
-        totalInStock: props.totalInStock ?? 0,
+        totalInStock: props.totalInStock ?? undefined,
         createdAt: props.createdAt ?? new Date(),
         updatedAt: props.updatedAt ?? new Date(),
         categoryId: props.categoryId ?? undefined,
@@ -97,9 +98,10 @@ export class ProductEntity extends Entity<ProductEntityProps> {
   }
 
   public editInfo(data: EditInfoProductsProps) {
-    const { name, description, onSale, price, salePrice, inStock, totalInStock, categoryId } = data;
+    const { name, description, onSale, price, salePrice, inStock, totalInStock, categoryId, slug } = data;
 
     this.props.name = name ?? this.props.name;
+    this.props.slug = slug ?? createSlug(name);
     this.props.description = description ?? this.props.description;
     this.props.onSale = onSale ?? this.props.onSale;
     this.props.price = price ?? this.props.price;

@@ -1,4 +1,5 @@
 import { UniqueEntityId } from '@root/core/domain/entity/unique-id.entity';
+
 import { ProductEntity } from './product.entity';
 
 describe('Product - Entity', () => {
@@ -13,10 +14,10 @@ describe('Product - Entity', () => {
     expect(product.slug).toBe('product');
     expect(product.description).toBe('Product description');
     expect(product.price).toEqual(1500);
-    expect(product.salePrice).toEqual(null);
+    expect(product.salePrice).toEqual(undefined);
     expect(product.onSale).toBe(false);
     expect(product.inStock).toBe(false);
-    expect(product.totalInStock).toEqual(0);
+    expect(product.totalInStock).toEqual(undefined);
   });
 
   it('should be able to create a product with promotion', async () => {
@@ -58,9 +59,9 @@ describe('Product - Entity', () => {
     expect(product.slug).toBe('product');
     expect(product.description).toBe('Product description');
     expect(product.price).toEqual(1500);
-    expect(product.salePrice).toEqual(null);
+    expect(product.salePrice).toEqual(undefined);
     expect(product.onSale).toBe(false);
     expect(product.inStock).toBe(false);
-    expect(product.totalInStock).toEqual(0);
+    expect(product.totalInStock).toEqual(undefined);
   });
 });
