@@ -1,4 +1,5 @@
 import { UniqueEntityId } from '@root/core/domain/entity/unique-id.entity';
+
 import { CategoryEntity } from './category.entity';
 
 describe('Category - Entity', () => {

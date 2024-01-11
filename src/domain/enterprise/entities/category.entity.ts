@@ -7,6 +7,13 @@ export type CategoryEntityProps = {
   name: string;
   slug: string;
   createdAt: Date;
+  updatedAt?: Date;
+};
+
+export type EditCategoryInfoProps = {
+  name?: string;
+  slug?: string;
+  updatedAt?: Date;
 };
 
 export class CategoryEntity extends Entity<CategoryEntityProps> {
@@ -32,5 +39,11 @@ export class CategoryEntity extends Entity<CategoryEntityProps> {
     );
 
     return category;
+  }
+
+  public editInfo(data: EditCategoryInfoProps) {
+    this.props.name = data.name ?? this.props.name;
+    this.props.slug = data.slug ?? this.props.slug;
+    this.props.updatedAt = new Date();
   }
 }
