@@ -1,33 +1,55 @@
-import { Either, left, right } from '@root/core/logic/Either';
-import { CategoryRepository } from '../../repositories/category.repository';
 import { CategoryEntity } from '@root/domain/enterprise/entities/category.entity';
+import { ImageEntity } from '@root/domain/enterprise/entities/image.entity';
+import { InMemoryCategoryRepository } from 'test/repositories/in-memory-category.repository';
+import { InMemoryImagesRepository } from 'test/repositories/in-memory-images-repository';
 
-type Input = {
-  name: string;
-};
+import { CreateCategoryUseCase } from './create-category.use-case';
 
-type Output = Either<Error, CategoryEntity>;
+describe('Create Category - Use Case', () => {
+  let inMemoryCategoryRepository: InMemoryCategoryRepository;
+  let inMemoryImagesRepository: InMemoryImagesRepository;
+  let sut: CreateCategoryUseCase;
 
-export class CreateCategoryUseCase {
-  constructor(private readonly categoryRepository: CategoryRepository) {}
+  const categoryExists = CategoryEntity.create({
+    name: 'Consoles',
+  });
 
-  async execute({ name }: Input): Promise<Output> {
-    const category = CategoryEntity.create({
-      name,
+  const image = ImageEntity.create({
+    url: 'test',
+    categoryId: categoryExists.id,
+  });
+
+  beforeEach(() => {
+    inMemoryImagesRepository = new InMemoryImagesRepository();
+    inMemoryCategoryRepository = new InMemoryCategoryRepository(inMemoryImagesRepository);
+    sut = new CreateCategoryUseCase(inMemoryCategoryRepository, inMemoryImagesRepository);
+    inMemoryImagesRepository.create({
+      image,
+    });
+  });
+
+  it('should be able to create an new category', async () => {
+    const output = await sut.execute({
+      name: 'PCS',
+      imageId: image.id,
     });
 
-    const categoryExists = await this.categoryRepository.findBySlug({
-      categorySlug: category.slug,
+    expect(output.isRight()).toBe(true);
+    expect(inMemoryCategoryRepository.categories).toHaveLength(1);
+  });
+
+  it('should not be able to create a category with existing id or slug', async () => {
+    inMemoryCategoryRepository.create({
+      category: categoryExists,
     });
 
-    if (categoryExists) {
-      return left(new Error(`This category already exists`));
-    }
-
-    const newCategory = await this.categoryRepository.create({
-      category,
+    const output = await sut.execute({
+      name: categoryExists.name,
+      imageId: image.id,
     });
 
-    return right(newCategory);
-  }
-}
+    expect(output.isLeft()).toBe(true);
+    expect(output.value).toEqual(new Error(`Category already exists`));
+    expect(inMemoryCategoryRepository.categories).toHaveLength(1);
+  });
+});
