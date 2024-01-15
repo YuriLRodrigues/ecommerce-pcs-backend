@@ -17,7 +17,7 @@ export class DeleteCategoryUseCase {
     });
 
     if (!categoryExists) {
-      return left(new Error(`This category does not exist`));
+      return left(new Error(`This category doesn't exist`));
     }
 
     await this.categoryRepository.delete({
