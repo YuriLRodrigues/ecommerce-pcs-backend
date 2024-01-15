@@ -36,7 +36,7 @@ describe('Register User - Use Case', () => {
     );
   });
 
-  it('not should be able to register user in the database with existing email', async () => {
+  it('should not be able to register user in the database with existing email', async () => {
     await inMemoryUsersRepository.register({ user: userDefault });
 
     const userExists = UserEntity.create({
