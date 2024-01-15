@@ -1,6 +1,7 @@
-import { InMemoryProductRepository } from 'test/repositories/in-memory-product.repository';
-import { FindProductBySlugUseCase } from './find-product-by-slug.use-case';
 import { ProductEntity } from '@root/domain/enterprise/entities/product.entity';
+import { InMemoryProductRepository } from 'test/repositories/in-memory-product.repository';
+
+import { FindProductBySlugUseCase } from './find-product-by-slug.use-case';
 
 describe('Find Product By Slug - Use Case', () => {
   let sut: FindProductBySlugUseCase;
@@ -35,7 +36,7 @@ describe('Find Product By Slug - Use Case', () => {
     );
   });
 
-  it('not should be able to find one product by random slug', async () => {
+  it('should not be able to find one product by random slug', async () => {
     const output = await sut.execute({ slug: 'productsaas-1212' });
 
     expect(output.isLeft()).toBe(true);

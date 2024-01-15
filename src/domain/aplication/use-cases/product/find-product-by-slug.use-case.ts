@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ProductRepository } from '../../repositories/product.repository';
 import { Either, left, right } from '@root/core/logic/Either';
 import { ProductEntity } from '@root/domain/enterprise/entities/product.entity';
+
+import { ProductRepository } from '../../repositories/product.repository';
 
 type Output = Either<Error, ProductEntity>;
 
