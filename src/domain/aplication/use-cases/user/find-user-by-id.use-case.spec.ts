@@ -37,7 +37,7 @@ describe('Find User By Id - Use Case', () => {
     );
   });
 
-  it('not should be able to find a user by id with invalid id', async () => {
+  it('should not be able to find a user by id with invalid id', async () => {
     const randomId = new UniqueEntityId();
     const output = await sut.execute({ id: randomId });
 

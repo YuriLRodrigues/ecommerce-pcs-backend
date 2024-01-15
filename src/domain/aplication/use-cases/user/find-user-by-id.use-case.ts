@@ -18,7 +18,7 @@ export class FindUserByIdUseCase {
     const user = await this.userRepository.findById({ id: id.toValue() });
 
     if (!user) {
-      return left(new Error(`User with id ${id} does not exist`));
+      return left(new Error(`User with id ${id} doesn't exist`));
     }
 
     return right(user);
