@@ -21,7 +21,7 @@ export class FindProductsByCategoryUseCase {
   ) {}
 
   async execute({ categorySlug, limit, page, inStock }: Input): Promise<Output> {
-    const categoryExists = await this.categoryRepository.findCategoryBySlug({
+    const categoryExists = await this.categoryRepository.findBySlug({
       categorySlug,
     });
 

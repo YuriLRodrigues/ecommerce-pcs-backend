@@ -1,13 +1,16 @@
-import { InMemoryCategoryRepository } from 'test/repositories/in-memory-category.repository';
-import { FindProductsByCategoryUseCase } from './find-products-by-category.use-case';
-import { InMemoryProductRepository } from 'test/repositories/in-memory-product.repository';
 import { CategoryEntity } from '@root/domain/enterprise/entities/category.entity';
 import { ProductEntity } from '@root/domain/enterprise/entities/product.entity';
+import { InMemoryCategoryRepository } from 'test/repositories/in-memory-category.repository';
+import { InMemoryImagesRepository } from 'test/repositories/in-memory-images-repository';
+import { InMemoryProductRepository } from 'test/repositories/in-memory-product.repository';
+
+import { FindProductsByCategoryUseCase } from './find-products-by-category.use-case';
 
 describe('Find Products By Category - Use Case', () => {
   let sut: FindProductsByCategoryUseCase;
   let inMemoryCategoryRepository: InMemoryCategoryRepository;
   let inMemoryProductRepository: InMemoryProductRepository;
+  let inMemoryImagesRepository: InMemoryImagesRepository;
 
   const categoryPhones = CategoryEntity.create({
     name: 'Phones',
@@ -39,20 +42,21 @@ describe('Find Products By Category - Use Case', () => {
   });
 
   beforeEach(() => {
-    inMemoryCategoryRepository = new InMemoryCategoryRepository();
+    inMemoryImagesRepository = new InMemoryImagesRepository();
+    inMemoryCategoryRepository = new InMemoryCategoryRepository(inMemoryImagesRepository);
     inMemoryProductRepository = new InMemoryProductRepository();
     sut = new FindProductsByCategoryUseCase(inMemoryProductRepository, inMemoryCategoryRepository);
 
-    inMemoryCategoryRepository.createCategory({
+    inMemoryCategoryRepository.create({
       category: categoryPC,
     });
 
-    inMemoryCategoryRepository.createCategory({
+    inMemoryCategoryRepository.create({
       category: categoryPhones,
     });
   });
 
-  it('not should be able to find an products in a category', async () => {
+  it('should not be able to find an products in a category', async () => {
     const output = await sut.execute({
       categorySlug: categoryPC.slug,
       limit: 10,
@@ -89,7 +93,7 @@ describe('Find Products By Category - Use Case', () => {
     ).toHaveLength(2);
   });
 
-  it('not should be able to find all products in a category non-existent', async () => {
+  it('should not be able to find all products in a category non-existent', async () => {
     const output = await sut.execute({
       categorySlug: 'invalid category slug',
       limit: 10,
