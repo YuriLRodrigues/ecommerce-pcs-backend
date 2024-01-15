@@ -1,6 +1,7 @@
-import { Either, left, right } from '@root/core/logic/Either';
-import { ProductRepository } from '../../repositories/product.repository';
 import { Injectable } from '@nestjs/common';
+import { Either, left, right } from '@root/core/logic/Either';
+
+import { ProductRepository } from '../../repositories/product.repository';
 
 type Output = Either<Error, void>;
 
@@ -22,6 +23,7 @@ export class DeleteProductUseCase {
     }
 
     await this.productRepository.delete({ productSlug });
+
     return right(null);
   }
 }
