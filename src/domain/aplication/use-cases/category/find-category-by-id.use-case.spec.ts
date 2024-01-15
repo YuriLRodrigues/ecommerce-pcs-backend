@@ -1,25 +1,31 @@
-import { InMemoryCategoryRepository } from 'test/repositories/in-memory-category.repository';
-import { FindCategoryByIdUseCase } from './find-category-by-id.use-case';
+import { UniqueEntityId } from '@root/core/domain/entity/unique-id.entity';
 import { CategoryEntity } from '@root/domain/enterprise/entities/category.entity';
+import { InMemoryCategoryRepository } from 'test/repositories/in-memory-category.repository';
+import { InMemoryImagesRepository } from 'test/repositories/in-memory-images-repository';
+
+import { FindCategoryByIdUseCase } from './find-category-by-id.use-case';
 
 describe('Find Category By Id - Use Case', () => {
   let sut: FindCategoryByIdUseCase;
   let inMemoryCategoryRepository: InMemoryCategoryRepository;
+  let inMemoryImagesRepository: InMemoryImagesRepository;
+
   const category = CategoryEntity.create({
     name: 'Pcs',
   });
 
   beforeEach(() => {
-    inMemoryCategoryRepository = new InMemoryCategoryRepository();
+    inMemoryImagesRepository = new InMemoryImagesRepository();
+    inMemoryCategoryRepository = new InMemoryCategoryRepository(inMemoryImagesRepository);
     sut = new FindCategoryByIdUseCase(inMemoryCategoryRepository);
-    inMemoryCategoryRepository.createCategory({
+    inMemoryCategoryRepository.create({
       category,
     });
   });
 
   it('should be able to find a category with your correctly id', async () => {
     const output = await sut.execute({
-      categoryId: category.id.toValue(),
+      categoryId: category.id,
     });
 
     expect(output.isRight()).toBe(true);
@@ -30,16 +36,18 @@ describe('Find Category By Id - Use Case', () => {
         slug: 'pcs',
       }),
     );
-    expect(inMemoryCategoryRepository.category).toHaveLength(1);
+    expect(inMemoryCategoryRepository.categories).toHaveLength(1);
   });
 
-  it('not should be able to find a category with an incorrect/invalid id', async () => {
+  it('should not be able to find a category with an incorrect/invalid id', async () => {
+    const randomId = new UniqueEntityId();
+
     const output = await sut.execute({
-      categoryId: 'invalid-category-id',
+      categoryId: randomId,
     });
 
     expect(output.isLeft()).toBe(true);
     expect(output.value).toEqual(new Error(`This category doesn't exists`));
-    expect(inMemoryCategoryRepository.category).toHaveLength(1);
+    expect(inMemoryCategoryRepository.categories).toHaveLength(1);
   });
 });
