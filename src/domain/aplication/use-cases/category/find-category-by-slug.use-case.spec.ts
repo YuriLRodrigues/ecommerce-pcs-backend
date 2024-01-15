@@ -1,18 +1,23 @@
-import { InMemoryCategoryRepository } from 'test/repositories/in-memory-category.repository';
 import { CategoryEntity } from '@root/domain/enterprise/entities/category.entity';
+import { InMemoryCategoryRepository } from 'test/repositories/in-memory-category.repository';
+import { InMemoryImagesRepository } from 'test/repositories/in-memory-images-repository';
+
 import { FindCategoryBySlugUseCase } from './find-category-by-slug.use-case';
 
 describe('Find Category By Slug - Use Case', () => {
   let sut: FindCategoryBySlugUseCase;
   let inMemoryCategoryRepository: InMemoryCategoryRepository;
+  let inMemoryImagesRepository: InMemoryImagesRepository;
+
   const category = CategoryEntity.create({
     name: 'Pcs',
   });
 
   beforeEach(() => {
-    inMemoryCategoryRepository = new InMemoryCategoryRepository();
+    inMemoryImagesRepository = new InMemoryImagesRepository();
+    inMemoryCategoryRepository = new InMemoryCategoryRepository(inMemoryImagesRepository);
     sut = new FindCategoryBySlugUseCase(inMemoryCategoryRepository);
-    inMemoryCategoryRepository.createCategory({
+    inMemoryCategoryRepository.create({
       category,
     });
   });
@@ -30,16 +35,16 @@ describe('Find Category By Slug - Use Case', () => {
         slug: 'pcs',
       }),
     );
-    expect(inMemoryCategoryRepository.category).toHaveLength(1);
+    expect(inMemoryCategoryRepository.categories).toHaveLength(1);
   });
 
-  it('not should be able to find a category with an incorrect/invalid slug', async () => {
+  it('should not be able to find a category with an incorrect/invalid slug', async () => {
     const output = await sut.execute({
       categorySlug: 'invalid-category-slug',
     });
 
     expect(output.isLeft()).toBe(true);
     expect(output.value).toEqual(new Error(`This category doesn't exists`));
-    expect(inMemoryCategoryRepository.category).toHaveLength(1);
+    expect(inMemoryCategoryRepository.categories).toHaveLength(1);
   });
 });
