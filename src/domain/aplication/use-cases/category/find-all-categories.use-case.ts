@@ -1,24 +1,17 @@
 import { Either, left, right } from '@root/core/logic/Either';
+import { CategoryDetailsEntity } from '@root/domain/enterprise/entities/category-details.entity';
+
 import { CategoryRepository } from '../../repositories/category.repository';
-import { CategoryEntity } from '@root/domain/enterprise/entities/category.entity';
 
-type Input = {
-  limit?: number;
-  page?: number;
-};
-
-type Output = Either<Error, CategoryEntity[]>;
+type Output = Either<Error, CategoryDetailsEntity[]>;
 
 export class FindAllCategoriesUseCase {
   constructor(private readonly categoryRepository: CategoryRepository) {}
 
-  async execute({ limit, page }: Input): Promise<Output> {
-    const categories = await this.categoryRepository.findAll({
-      limit,
-      page,
-    });
+  async execute(): Promise<Output> {
+    const categories = await this.categoryRepository.findAll();
 
-    if (!categories) {
+    if (categories.length === 0) {
       return left(new Error(`Cannot find all categories`));
     }
 
