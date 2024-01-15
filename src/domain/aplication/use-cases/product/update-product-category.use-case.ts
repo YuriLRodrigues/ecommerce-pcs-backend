@@ -1,8 +1,9 @@
+import { Injectable } from '@nestjs/common';
 import { Either, left, right } from '@root/core/logic/Either';
 import { ProductEntity } from '@root/domain/enterprise/entities/product.entity';
-import { ProductRepository } from '../../repositories/product.repository';
+
 import { CategoryRepository } from '../../repositories/category.repository';
-import { Injectable } from '@nestjs/common';
+import { ProductRepository } from '../../repositories/product.repository';
 
 type Output = Either<Error, ProductEntity>;
 
@@ -24,15 +25,15 @@ export class UpdateProductCategoryUseCase {
     });
 
     if (!product) {
-      return left(new Error('This product does not exist'));
+      return left(new Error(`This product doesn't exist`));
     }
 
-    const categoryExists = await this.categoryRepository.findCategoryById({
+    const categoryExists = await this.categoryRepository.findById({
       categoryId,
     });
 
     if (!categoryExists) {
-      return left(new Error('This category does not exist'));
+      return left(new Error(`This category doesn't exist`));
     }
 
     product.categoryId = categoryId;
