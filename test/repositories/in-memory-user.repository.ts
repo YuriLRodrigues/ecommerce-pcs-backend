@@ -13,6 +13,7 @@ export class InMemoryUsersRepository implements UserRepository {
 
   async register({ user }: RegisterProps): Promise<UserEntity> {
     this.users.push(user);
+
     return user;
   }
 
@@ -31,11 +32,13 @@ export class InMemoryUsersRepository implements UserRepository {
   async save({ user }: SaveProps): Promise<UserEntity> {
     const userIndex = this.users.findIndex((u) => u.id.toValue() === user.id.toValue());
     this.users[userIndex] = user;
+
     return user;
   }
 
   async delete({ id }: DeleteProps): Promise<void> {
     this.users = this.users.filter((u) => u.id.toValue() !== id);
+
     return;
   }
 }
